@@ -238,23 +238,36 @@ def anime_eyes(front, top, art, pal, lefts=(2, 9)):
     front.stamp(art, pal, top=top, left=lefts[1], mirror=True)
 
 
-# the shared eye: a thick upper lash that dips at the outer corner, a full
-# iris shaded dark under the lid, a pupil, one catch-light and a bright rim
-# along the bottom. Palette keys: L lash, D dark iris, E iris, P pupil,
-# G catch-light, H light iris. EYE_ART_TALL is a bigger, softer version.
-EYE_ART_TALL = [
+# Faces follow the usual Minecraft skin look: no mouth or nose, just eyes.
+# Palette keys: L lash, W white, D dark iris, E iris, H light iris,
+# G catch-light. Each is drawn for the character's right eye (outer corner
+# on the left) and mirrored for the left.
+#
+# EYE_SOFT: a heavy two-row lash bar that flicks out at the corner, over a
+# white and a softly shaded iris (girls).
+EYE_SOFT = [
+    ".LLLL",
     "LLLLL",
-    "LDGDD",
-    ".EPPE",
-    ".EEEE",
-    ".HHHH",
+    "LWWGD",
+    ".WWEH",
 ]
-EYE_ART = [
-    "LLLLL",
-    "LDGDD",
-    ".EPPE",
-    ".HHHH",
+# EYE_SHARP: a thinner lash over a narrower eye, worn under a thick brow
+# (boys and men); the brow is painted separately with brows().
+EYE_SHARP = [
+    "LLLL",
+    "WWGD",
+    "WWEH",
 ]
+
+
+def brows(front, row, colour, lefts=(2, 10), width=4, slant=False):
+    """Thick straight brows; `slant` drops the inner ends a texel (a frown)."""
+    for left in lefts:
+        for c in range(left, left + width):
+            front.set(row, c, colour)
+    if slant:
+        front.set(row + 1, lefts[0] + width - 1, colour)
+        front.set(row + 1, lefts[1], colour)
 
 
 def add_neckband(skin, y=21.25):

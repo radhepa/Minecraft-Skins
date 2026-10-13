@@ -60,13 +60,13 @@ One alien from every world in the Solar System except Earth, in order from the S
 
 ## Land of the Hidden Sift
 
-A hidden shinobi village inside the Sift, the soul-filled dimension reached through rifts deep underground. Its people are original side characters: villagers who wear the village headband (the crest is a rift splitting a diamond), and the Soul-Infused rogue ninja who went too deep into the rifts and wear theirs slashed through.
+A hidden shinobi village inside the Sift, the soul-filled dimension reached through rifts deep underground. Faces follow the usual Minecraft skin look: clean anime eyes (soft and lashed for the women, sharper under thick brows for the men) and a small, subtle mouth. Its people are original side characters: villagers who wear the village headband (the crest is a rift splitting a diamond), and the Soul-Infused rogue ninja who went too deep into the rifts and wear theirs slashed through.
 
 | Skin | Role | Arms | 3D extras |
 | --- | --- | --- | --- |
-| Hotaru the Academy Hopeful | Villager | Classic | Village headband with tails, knotted coral scarf, soul-firefly jar, thigh holster, open-toed sandals |
+| Kenji the Academy Hopeful | Villager | Classic | Village headband with tails, training scroll on his back, belt pouch, steel armguard, thigh holster, open-toed sandals |
 | Mio the Blub Keeper | Villager | Slim | A Blub riding on her shoulder, long hair and face-framing locks, meadow-flower hairpin, headband worn as a neckband, obi bow |
-| Kurogane the Soul-Bound | Villain | Classic | Slashed headband, low ponytail, coat with soul-flame hem and tattered tails, Carapace chitin pauldron, floating soul wisps |
+| Kurogane the Soul-Bound | Villain | Slim | Slashed headband, low ponytail, coat with soul-flame hem and tattered tails, Carapace chitin pauldron, floating soul wisps |
 
 ## Previews
 

@@ -1,9 +1,9 @@
 {
   "skins": [
     {
-      "localization_name": "Hotaru",
-      "geometry": "geometry.LandOfTheHiddenSift.Hotaru",
-      "texture": "hotaru.png",
+      "localization_name": "Kenji",
+      "geometry": "geometry.LandOfTheHiddenSift.Kenji",
+      "texture": "kenji.png",
       "type": "paid"
     },
     {

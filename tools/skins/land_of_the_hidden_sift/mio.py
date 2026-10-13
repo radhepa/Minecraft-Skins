@@ -10,7 +10,7 @@ import numpy as np
 from paintkit import SIDES, box, clear_under_shoes, cloth, gradient, hair, rows, skin_tone
 from skinlib import Skin, add_standard_body, noise
 
-from .shinobi import (EYE_ART_TALL, STEEL, STEEL_D, STEEL_L, add_neckband, add_sandals,
+from .shinobi import (EYE_SOFT, STEEL, STEEL_D, STEEL_L, add_neckband, add_sandals,
                       anime_eyes, paint_neckband, paint_sandals, wraps)
 
 ID = "geometry.LandOfTheHiddenSift.Mio"
@@ -26,6 +26,7 @@ DETAILS = [
 SKIN = (250, 222, 206)
 SKIN_D = (228, 190, 174)
 BLUSH = (250, 168, 178)
+MOUTH = (214, 130, 136)
 HAIR = (196, 168, 232)
 HAIR_D = (140, 110, 190)
 HAIR_L = (216, 196, 244)
@@ -33,9 +34,7 @@ LASH = (60, 36, 70)
 EYE_D = (20, 100, 106)
 EYE = (46, 184, 174)
 EYE_L = (170, 246, 232)
-PUPIL = (14, 52, 60)
 WHITE = (255, 255, 255)
-MOUTH = (196, 96, 112)
 CREAM = (244, 236, 216)
 CREAM_D = (212, 200, 176)
 OBI = (40, 140, 140)
@@ -97,11 +96,13 @@ def paint_head(skin):
     front = skin.face("head", "north")
     skin_tone(front, SKIN, 5000, var=0.012)
     lilac(front, 5001, mask=front.row <= 6)
-    anime_eyes(front, 7, EYE_ART_TALL, {"L": LASH, "D": EYE_D, "E": EYE, "P": PUPIL,
-                                   "G": WHITE, "H": EYE_L})
+    anime_eyes(front, 8, EYE_SOFT, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L,
+                                    "G": EYE_L})
     for c in (1, 2, 13, 14):
         front.set(12, c, BLUSH)
-    front.stamp(["M..M", ".MM."], {"M": MOUTH}, top=13, left=6)
+    # a tiny soft mouth
+    front.set(13, 7, MOUTH)
+    front.set(13, 8, MOUTH)
     for f in ("east", "west", "south", "up"):
         face = skin.face("head", f)
         skin_tone(face, SKIN, 5010 + len(f))

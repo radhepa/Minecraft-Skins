@@ -1,10 +1,10 @@
 """Kurogane the Soul-Bound: leader of the Soul-Infused, rogue ninja who
 went too deep into the Sift's rifts and came back changed. Ash-pale skin
 split by glowing soul cracks, long black hair parted down the middle and
-tied in a low ponytail, narrow glowing teal eyes shadowed in violet, his
+tied in a low ponytail, glowing teal eyes shadowed in violet, her
 village headband slashed through, a long high-collared coat with a soul-flame
 hem and tattered tails, a chitin pauldron torn from the Carapace and two soul
-wisps drifting at his shoulders.
+wisps drifting at her shoulders.
 """
 
 import numpy as np
@@ -12,7 +12,7 @@ import numpy as np
 from paintkit import SIDES, box, clear_under_shoes, cloth, gradient, hair, rows, skin_tone
 from skinlib import Skin, add_standard_body, noise
 
-from .shinobi import (add_headband, add_sandals, anime_eyes, paint_headband,
+from .shinobi import (EYE_SOFT, add_headband, add_sandals, anime_eyes, paint_headband,
                       paint_sandals, wraps)
 
 ID = "geometry.LandOfTheHiddenSift.Kurogane"
@@ -31,11 +31,11 @@ SOUL = (80, 236, 214)
 SOUL_C = (214, 255, 248)
 SOUL_D = (30, 150, 150)
 MARK = (128, 70, 180)
+MOUTH = (150, 92, 126)
 HAIR = (44, 40, 62)
 HAIR_D = (22, 20, 32)
 HAIR_L = (86, 78, 116)
 LASH = (24, 18, 32)
-MOUTH = (110, 70, 100)
 COAT = (36, 32, 50)
 COAT_D = (20, 18, 30)
 COAT_L = (62, 56, 82)
@@ -53,7 +53,7 @@ SILVER = (200, 204, 216)
 
 
 def build():
-    skin = Skin(ID)
+    skin = Skin(ID, slim=True)
     add_standard_body(skin)
     add_headband(skin, yc=30.0)
     # low ponytail tied with a violet cord
@@ -67,9 +67,9 @@ def build():
     skin.acc("flapR", "body", [-4.25, 6.0, -2.4], [3.25, 6, 0.4], lowres=("south", "up", "down", "east", "west"))
     skin.acc("flapL", "body", [1.0, 6.0, -2.4], [3.25, 6, 0.4], like="flapR")
     # chitin pauldron on the left shoulder
-    skin.acc("pauldron", "leftArm", [3.5, 21.75, -2.75], [5, 3, 5.5], rotation=[0, 0, -10],
-             pivot=[6.0, 23.0, 0.0], lowres=("down",))
-    # soul wisps drifting by his shoulders
+    skin.acc("pauldron", "leftArm", [3.5, 21.25, -2.75], [4.25, 3, 5.5], rotation=[0, 0, -10],
+             pivot=[5.5, 22.5, 0.0], lowres=("down",))
+    # soul wisps drifting by her shoulders
     skin.acc("wisp", "body", [-9.75, 25.5, 1.5], [1.5, 3, 1.5], faces=SIDES)
     skin.acc("wisp2", "body", [8.5, 19.5, 2.5], [1.5, 3, 1.5], like="wisp")
     h = add_sandals(skin)
@@ -102,15 +102,15 @@ def paint_head(skin):
     front = skin.face("head", "north")
     skin_tone(front, SKIN, 6000, var=0.012)
     black_hair(front, 6001, mask=front.row <= 6)
-    # narrow glowing eyes under a heavy lid, violet shadow beneath
-    anime_eyes(front, 8, ["LLLLL", "LDGDD", ".EPPE"], {"L": LASH, "D": SOUL_D, "E": SOUL,
-                                                       "P": (10, 40, 44), "G": SOUL_C})
-    rows(front, 11, 11, MARK, ((front.col >= 3) & (front.col <= 5)) | ((front.col >= 10) & (front.col <= 12)))
-    front.shade(0.92, (front.row == 11) & ((front.col == 2) | (front.col == 13)))
-    front.set(11, 7, SKIN_D)
-    front.stamp(["MMM"], {"M": MOUTH}, top=13, left=6)
-    front.set(12, 9, MOUTH)
-    # a soul crack splitting his left cheek
+    # glowing lashed eyes, violet shadow beneath
+    anime_eyes(front, 8, EYE_SOFT, {"L": LASH, "W": (236, 232, 244), "D": SOUL_D, "E": SOUL,
+                                    "H": SOUL_C, "G": SOUL_C})
+    rows(front, 12, 12, MARK, ((front.col >= 3) & (front.col <= 5)) | ((front.col >= 10) & (front.col <= 12)))
+    # a thin smirk, one corner lifted, well clear of the eye shadow
+    front.set(14, 6, MOUTH)
+    front.set(14, 7, MOUTH)
+    front.set(13, 8, MOUTH)
+    # a soul crack splitting her left cheek
     crack(front, [(13, 14), (14, 13), (14, 12), (15, 12)])
     for f in ("east", "west", "south", "up"):
         face = skin.face("head", f)

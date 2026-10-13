@@ -36,7 +36,7 @@ PACKS = {
         "header_uuid": "dbed8acf-d7a1-4ce0-94d0-e3fddf43f515",
         "module_uuid": "af116a44-ee03-49b4-a7c5-7bada15ff356",
         "version": [1, 0, 0],
-        "skins": ["hotaru", "mio", "kurogane"],
+        "skins": ["kenji", "mio", "kurogane"],
         "style": {"bg": ((30, 58, 74), (8, 12, 24)), "title": (176, 246, 236),
                   "label": (255, 150, 170)},
     },
