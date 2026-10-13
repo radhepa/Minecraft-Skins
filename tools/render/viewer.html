@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Skin Preview</title>
+<style>
+  html, body { margin: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+// Loads a Bedrock geometry (format 1.12.0, per-face UVs) and renders it the
+// way the game maps textures. JSON x is negated so the character's right arm
+// shows on the viewer's left when they face the camera (front = -Z).
+
+const FACE_DEF = {
+  // corner order: TL, TR, BL, BR in texture space, JSON coordinates
+  north: (a, b) => [[a[0], b[1], a[2]], [b[0], b[1], a[2]], [a[0], a[1], a[2]], [b[0], a[1], a[2]]],
+  south: (a, b) => [[b[0], b[1], b[2]], [a[0], b[1], b[2]], [b[0], a[1], b[2]], [a[0], a[1], b[2]]],
+  east:  (a, b) => [[a[0], b[1], b[2]], [a[0], b[1], a[2]], [a[0], a[1], b[2]], [a[0], a[1], a[2]]],
+  west:  (a, b) => [[b[0], b[1], a[2]], [b[0], b[1], b[2]], [b[0], a[1], a[2]], [b[0], a[1], b[2]]],
+  up:    (a, b) => [[a[0], b[1], b[2]], [b[0], b[1], b[2]], [a[0], b[1], a[2]], [b[0], b[1], a[2]]],
+  down:  (a, b) => [[a[0], a[1], b[2]], [b[0], a[1], b[2]], [a[0], a[1], a[2]], [b[0], a[1], a[2]]],
+};
+const NORMAL = { north: [0, 0, -1], south: [0, 0, 1], east: [-1, 0, 0], west: [1, 0, 0], up: [0, 1, 0], down: [0, -1, 0] };
+
+const R = (p) => new THREE.Vector3(-p[0], p[1], p[2]);
+
+function cubeGeometry(cube, pivot, tw, th) {
+  const inf = cube.inflate || 0;
+  const a = [cube.origin[0] - inf, cube.origin[1] - inf, cube.origin[2] - inf];
+  const b = [cube.origin[0] + cube.size[0] + inf, cube.origin[1] + cube.size[1] + inf, cube.origin[2] + cube.size[2] + inf];
+  const pos = [], uv = [], nrm = [];
+  for (const [face, f] of Object.entries(cube.uv)) {
+    const c = FACE_DEF[face](a, b).map(p => R([p[0] - pivot[0], p[1] - pivot[1], p[2] - pivot[2]]));
+    const [u, v] = f.uv, [w, h] = f.uv_size;
+    const t = [[u, v], [u + w, v], [u, v + h], [u + w, v + h]].map(q => [q[0] / tw, q[1] / th]);
+    const n = R(NORMAL[face]);
+    let tris = [[0, 2, 1], [1, 2, 3]];
+    const e1 = c[2].clone().sub(c[0]), e2 = c[1].clone().sub(c[0]);
+    if (e1.cross(e2).dot(n) < 0) tris = [[0, 1, 2], [1, 3, 2]];
+    for (const tri of tris) for (const i of tri) {
+      pos.push(c[i].x, c[i].y, c[i].z); uv.push(t[i][0], t[i][1]); nrm.push(n.x, n.y, n.z);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3));
+  return g;
+}
+
+let renderer, scene, camera, bones = {}, model;
+
+async function load(geoUrl, texUrl, identifier) {
+  const geo = await (await fetch(geoUrl)).json();
+  const def = geo['minecraft:geometry'].find(g => g.description.identifier === identifier);
+  const tex = await new THREE.TextureLoader().loadAsync(texUrl);
+  tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.NearestFilter;
+  tex.flipY = false; tex.colorSpace = THREE.SRGBColorSpace; tex.generateMipmaps = false;
+  const mat = new THREE.MeshLambertMaterial({ map: tex, alphaTest: 0.5, side: THREE.DoubleSide });
+  const tw = def.description.texture_width, th = def.description.texture_height;
+
+  model = new THREE.Group();
+  bones = {};
+  for (const b of def.bones) {
+    const g = new THREE.Group();
+    g.userData.pivot = b.pivot;
+    bones[b.name] = g;
+    for (const c of b.cubes || []) g.add(new THREE.Mesh(cubeGeometry(c, b.pivot, tw, th), mat));
+  }
+  for (const b of def.bones) {
+    const g = bones[b.name];
+    const parent = b.parent ? bones[b.parent] : model;
+    const pp = b.parent ? bones[b.parent].userData.pivot : [0, 0, 0];
+    g.position.copy(R([b.pivot[0] - pp[0], b.pivot[1] - pp[1], b.pivot[2] - pp[2]]));
+    parent.add(g);
+  }
+  scene.add(model);
+}
+
+function setup(w, h) {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setSize(w, h);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  document.body.appendChild(renderer.domElement);
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(22, w / h, 1, 500);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.55));
+  const key = new THREE.DirectionalLight(0xffffff, 1.5);
+  key.position.set(0.5, 1.0, -0.8);   // above, in front of the character
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.6);
+  fill.position.set(-0.6, 0.3, 0.8);
+  scene.add(fill);
+}
+
+const DEG = Math.PI / 180;
+function pose(name) {
+  for (const g of Object.values(bones)) g.rotation.set(0, 0, 0);
+  if (name === 'walk') {
+    bones.rightArm.rotation.x = 32 * DEG;  bones.leftArm.rotation.x = -32 * DEG;
+    bones.rightLeg.rotation.x = -28 * DEG; bones.leftLeg.rotation.x = 28 * DEG;
+    bones.head.rotation.y = 8 * DEG;
+  } else if (name === 'wave') {
+    bones.leftArm.rotation.z = -150 * DEG; bones.leftArm.rotation.x = 10 * DEG;
+    bones.rightArm.rotation.x = 8 * DEG; bones.head.rotation.x = -6 * DEG;
+    bones.head.rotation.y = -10 * DEG;
+  } else if (name === 'idle') {
+    bones.rightArm.rotation.z = 4 * DEG; bones.leftArm.rotation.z = -4 * DEG;
+  }
+}
+
+window.preview = {
+  async init(w, h, geoUrl, texUrl, id) { setup(w, h); await load(geoUrl, texUrl, id); return true; },
+  render({ yaw = 0, pitch = 10, dist = 95, target = 16.5, poseName = 'idle', fov = 22 }) {
+    pose(poseName);
+    camera.fov = fov; camera.updateProjectionMatrix();
+    // yaw 0 = straight at the front (front faces -Z)
+    const y = yaw * DEG, p = pitch * DEG;
+    camera.position.set(Math.sin(y) * Math.cos(p) * dist, target + Math.sin(p) * dist, -Math.cos(y) * Math.cos(p) * dist);
+    camera.lookAt(0, target, 0);
+    renderer.render(scene, camera);
+    return renderer.domElement.toDataURL('image/png');
+  },
+};
+window.ready = true;
+</script>
+</body>
+</html>

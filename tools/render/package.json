@@ -1,0 +1,9 @@
+{
+  "name": "skin-preview",
+  "private": true,
+  "type": "module",
+  "description": "Headless preview renderer for the Midnight Mischief skins",
+  "dependencies": {
+    "three": "0.160.0"
+  }
+}

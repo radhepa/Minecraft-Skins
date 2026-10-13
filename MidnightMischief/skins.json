@@ -1,0 +1,78 @@
+{
+  "skins": [
+    {
+      "localization_name": "PumpkinPrankster",
+      "geometry": "geometry.MidnightMischief.PumpkinPrankster",
+      "texture": "pumpkin_prankster.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "MoonlightWitch",
+      "geometry": "geometry.MidnightMischief.MoonlightWitch",
+      "texture": "moonlight_witch.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "BooHoodie",
+      "geometry": "geometry.MidnightMischief.BooHoodie",
+      "texture": "boo_hoodie.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "VelvetVampire",
+      "geometry": "geometry.MidnightMischief.VelvetVampire",
+      "texture": "velvet_vampire.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "FrankieStitches",
+      "geometry": "geometry.MidnightMischief.FrankieStitches",
+      "texture": "frankie_stitches.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "MidnightKitty",
+      "geometry": "geometry.MidnightMischief.MidnightKitty",
+      "texture": "midnight_kitty.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "CandyCornCutie",
+      "geometry": "geometry.MidnightMischief.CandyCornCutie",
+      "texture": "candy_corn_cutie.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "BoneChiller",
+      "geometry": "geometry.MidnightMischief.BoneChiller",
+      "texture": "bone_chiller.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "ScarecrowSam",
+      "geometry": "geometry.MidnightMischief.ScarecrowSam",
+      "texture": "scarecrow_sam.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "LunarHowler",
+      "geometry": "geometry.MidnightMischief.LunarHowler",
+      "texture": "lunar_howler.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "MummyWraps",
+      "geometry": "geometry.MidnightMischief.MummyWraps",
+      "texture": "mummy_wraps.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "BattyBelle",
+      "geometry": "geometry.MidnightMischief.BattyBelle",
+      "texture": "batty_belle.png",
+      "type": "paid"
+    }
+  ],
+  "serialize_name": "MidnightMischief",
+  "localization_name": "MidnightMischief"
+}
