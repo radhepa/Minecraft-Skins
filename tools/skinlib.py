@@ -1,4 +1,4 @@
-"""Shared helpers for building Midnight Mischief skins.
+"""Shared helpers for building HD 3D Bedrock skins.
 
 A skin is a set of cubes on the standard Bedrock player rig. Every cube uses
 per-face UVs on a 128x128 texture at 2 texels per model unit (HD density), so
@@ -31,12 +31,18 @@ def rgb(c, a=255):
 
 
 class Cube:
-    def __init__(self, name, bone, origin, size, rects, inflate=0.0):
+    def __init__(self, name, bone, origin, size, rects, inflate=0.0, rotation=None,
+                 pivot=None, like=None):
         self.name = name
         self.bone = bone
         self.origin = list(origin)
         self.size = list(size)
         self.inflate = inflate
+        # optional per-cube rotation (degrees) about `pivot`, as in Bedrock 1.12.0
+        self.rotation = list(rotation) if rotation else None
+        self.pivot = list(pivot) if pivot else None
+        # a clone reuses another cube's UVs (and so its painted texels)
+        self.like = like
         # face -> (u, v, uw, vh); negative sizes flip that axis
         self.rects = rects
 
@@ -60,7 +66,7 @@ def packed_rects(size, slots, px=PX):
 
     slots: face -> (u, v) in texels. Sizes come from the cube size.
     """
-    w, h, d = (int(round(s * px)) for s in size)
+    w, h, d = (max(1, int(round(s * px))) for s in size)
     dims = {
         "north": (w, h), "south": (w, h),
         "east": (d, h), "west": (d, h),
@@ -148,7 +154,7 @@ class Skin:
     def __init__(self, identifier, slim=False):
         self.identifier = identifier
         self.slim = slim
-        self.bones = SLIM_BONES if slim else PLAYER_BONES
+        self.bones = [dict(b) for b in (SLIM_BONES if slim else PLAYER_BONES)]
         self.cubes = []
         self.faces = {}
         self.auto = []          # accessory cubes whose UVs get packed later
@@ -156,18 +162,33 @@ class Skin:
 
     def add(self, cube):
         self.cubes.append(cube)
-        for f in cube.rects:
-            self.faces[(cube.name, f)] = Face(cube, f)
+        if cube.like is None:
+            for f in cube.rects:
+                self.faces[(cube.name, f)] = Face(cube, f)
         return cube
 
-    def acc(self, name, bone, origin, size, inflate=0.0, faces=FACES, px=PX, lowres=()):
+    def bone(self, name, parent, pivot, rotation=None):
+        """Extra bone (for a group of accessory cubes that share a tilt)."""
+        b = {"name": name, "parent": parent, "pivot": list(pivot)}
+        if rotation:
+            b["rotation"] = list(rotation)
+        self.bones.append(b)
+
+    def acc(self, name, bone, origin, size, inflate=0.0, faces=FACES, px=PX, lowres=(),
+            rotation=None, pivot=None, like=None):
         """Add an accessory cube; its face UVs are packed into free texture
         space automatically when the skin is composed. Faces listed in
-        `lowres` (plain soles, linings, hidden tops) use 1 texel per unit."""
+        `lowres` (plain soles, linings, hidden tops) use 1 texel per unit.
+        `like` names an earlier cube of the same size whose UVs (and paint)
+        this one reuses, which costs no texture space."""
+        if like is not None:
+            src = next(c for c in self.cubes if c.name == like)
+            return self.add(Cube(name, bone, origin, size, src.rects, inflate,
+                                 rotation, pivot, like=src))
         rects = {}
         for f in faces:
             rects.update(packed_rects(size, {f: (0, 0)}, px=1 if f in lowres else px))
-        cube = self.add(Cube(name, bone, origin, size, rects, inflate))
+        cube = self.add(Cube(name, bone, origin, size, rects, inflate, rotation, pivot))
         self.auto.append(cube)
         return cube
 
@@ -176,7 +197,7 @@ class Skin:
             return
         used = np.zeros((TEX, TEX), bool)
         for c in self.cubes:
-            if c in self.auto:
+            if c in self.auto or c.like is not None:
                 continue
             for u, v, uw, vh in c.rects.values():
                 u0, v0 = int(min(u, u + uw)), int(min(v, v + vh))
@@ -243,6 +264,8 @@ class Skin:
             if b.get("parent"):
                 entry["parent"] = b["parent"]
             entry["pivot"] = b["pivot"]
+            if b.get("rotation"):
+                entry["rotation"] = b["rotation"]
             if b.get("locators"):
                 entry["locators"] = b["locators"]
             cubes = []
@@ -252,9 +275,13 @@ class Skin:
                 cube = {"origin": c.origin, "size": c.size}
                 if c.inflate:
                     cube["inflate"] = c.inflate
+                if c.rotation:
+                    cube["pivot"] = c.pivot
+                    cube["rotation"] = c.rotation
+                rects = c.like.rects if c.like is not None else c.rects
                 cube["uv"] = {
                     f: {"uv": [r[0], r[1]], "uv_size": [r[2], r[3]]}
-                    for f, r in c.rects.items()
+                    for f, r in rects.items()
                 }
                 cubes.append(cube)
             if cubes:

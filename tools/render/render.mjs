@@ -1,6 +1,6 @@
 // Render preview shots of a skin from the pack using headless Chromium.
 //
-//   node tools/render/render.mjs <identifier> <texture.png> <outDir> [shots.json]
+//   node tools/render/render.mjs <identifier> <texture.png> <outDir> [shots.json] [geometry.json]
 //
 // Each shot is saved as <outDir>/<name>.png with a transparent background.
 
@@ -18,7 +18,7 @@ try { ({ chromium } = require('playwright')); } catch {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
-const [identifier, texture, outDir, shotsFile] = process.argv.slice(2);
+const [identifier, texture, outDir, shotsFile, geometryFile] = process.argv.slice(2);
 
 const DEFAULT_SHOTS = [
   { name: 'hero', yaw: 28, pitch: 8, poseName: 'idle' },
@@ -33,7 +33,7 @@ const DEFAULT_SHOTS = [
   { name: 'shoes', yaw: 35, pitch: 18, poseName: 'idle', dist: 34, target: 4, fov: 30 },
   { name: 'face', yaw: 22, pitch: 10, poseName: 'idle', dist: 40, target: 27, fov: 30 },
 ];
-const shots = shotsFile ? JSON.parse(fs.readFileSync(shotsFile, 'utf8')) : DEFAULT_SHOTS;
+const shots = shotsFile && shotsFile !== '-' ? JSON.parse(fs.readFileSync(shotsFile, 'utf8')) : DEFAULT_SHOTS;
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png' };
 const server = http.createServer((req, res) => {
@@ -53,8 +53,10 @@ page.on('console', m => { if (m.type() === 'error') console.error('page:', m.tex
 await page.goto(`${base}/tools/render/viewer.html`);
 await page.waitForFunction(() => window.ready === true);
 const texRel = '/' + path.relative(ROOT, path.resolve(texture)).split(path.sep).join('/');
+const geoRel = '/' + path.relative(ROOT, path.resolve(geometryFile || 'MidnightMischief/geometry.json'))
+  .split(path.sep).join('/');
 await page.evaluate(([w, h, g, t, id]) => window.preview.init(w, h, g, t, id),
-  [W, H, '/MidnightMischief/geometry.json', texRel, identifier]);
+  [W, H, geoRel, texRel, identifier]);
 
 fs.mkdirSync(outDir, { recursive: true });
 for (const shot of shots) {

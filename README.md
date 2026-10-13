@@ -1,8 +1,13 @@
 # Minecraft-Skins
 
-## Midnight Mischief (Bedrock skin pack)
+Bedrock Edition skin packs with HD textures and custom 3D geometry.
 
-`MidnightMischief/` is the skin pack itself. You can zip it or drop it into the Marketplace submission:
+| Pack | Folder | Skins |
+| --- | --- | --- |
+| Midnight Mischief | `MidnightMischief/` | 12 Halloween characters |
+| Solar System | `SolarSystem/` | Aliens from the Sun, planets, Moon and Pluto (in progress) |
+
+Each pack folder is the skin pack itself. You can zip it or drop it into the Marketplace submission:
 
 | File | Purpose |
 | --- | --- |
@@ -12,13 +17,13 @@
 | `*.png` | 128x128 HD skin textures |
 | `texts/` | `en_US.lang` names and `languages.json` |
 
-Each skin keeps every standard player bone (`root`, `waist`, `body`, `head`, `hat`, arms, legs, sleeves, pants, `jacket`, `cape`, item bones). Vanilla animations, held items and capes keep working. 3D accessories are extra cubes on those bones.
+Each skin keeps every standard player bone (`root`, `waist`, `body`, `head`, `hat`, arms, legs, sleeves, pants, `jacket`, `cape`, item bones). Vanilla animations, held items and capes keep working. 3D accessories are extra cubes on those bones, or on extra child bones (such as a tilted ring) that follow them.
 
 > Custom geometry in skin packs only loads in Marketplace partner content. In a sideloaded or free pack, Mojang only lets you use `geometry.humanoid.custom` and `geometry.humanoid.customSlim`.
 
-### Skins
+## Midnight Mischief
 
-Every skin has a 128x128 HD texture and its own 3D geometry. The first 8 follow the line-up art in `reference/`; the last 4 are originals in the same style.
+The first 8 skins follow the line-up art in `reference/`; the last 4 are originals in the same style.
 
 | Skin | Arms | 3D extras |
 | --- | --- | --- |
@@ -35,17 +40,29 @@ Every skin has a 128x128 HD texture and its own 3D geometry. The first 8 follow 
 | Mummy Wraps *(original)* | Classic | Trailing bandage strips, loose wraps, pharaoh collar |
 | Batty Belle *(original)* | Slim | Bat-ear hood, scalloped bat wings, sneakers |
 
-`previews/lineup.png` shows the whole pack. `previews/<skin>/` has a turnaround, poses, 3D detail close-ups, a turntable GIF, the texture map and, for the first 8, a side-by-side with the reference art.
+## Solar System
+
+| Skin | Home | Arms | 3D extras |
+| --- | --- | --- | --- |
+| Sol the Sun King | The Sun | Classic | Corona of 16 rays behind the head, flame-hemmed cape, gold pauldrons, gold boots |
+| Saturna | Saturn | Slim | Tilted 16-sided ring with the Cassini gap and a tiny moon, space buns, pointed ears, flared skirt, platform boots |
+| Neptide | Neptune | Classic | Gold trident across the back, dorsal-fin crest, fin ears, forearm + calf fins, webbed feet |
+
+## Previews
+
+`previews/<pack>/lineup.png` shows a whole pack. `previews/<pack>/<skin>/` has a turnaround, poses, 3D detail close-ups, a turntable GIF, the texture map and, where there is reference art, a side-by-side with it.
 
 ## Building
 
 ```sh
-python3 tools/build_pack.py                         # textures + all pack JSON
-(cd tools/render && npm install)                     # three.js for previews
-python3 tools/make_previews.py                       # all skins + lineup
+python3 tools/build_pack.py                          # every pack (or name one: solar_system)
+(cd tools/render && npm install)                      # three.js for previews
+python3 tools/make_previews.py solar_system           # all of a pack's skins + lineup
+python3 tools/make_previews.py solar_system saturna   # just one skin
 ```
 
-- `tools/skinlib.py` holds the rig (classic and slim), the HD UV layout (2 texels per unit), automatic UV packing for accessories and the geometry export.
-- `tools/paintkit.py` holds shared painters: fabric, hair/fur, sneakers, boots.
-- `tools/skins/<skin>.py` holds one skin's cubes and its painted texture.
-- `tools/render/` is a headless three.js viewer. It reads the real `geometry.json` and PNG and follows Bedrock's per-face UV rules, including the flipped `down` face. That makes the previews match what the game draws.
+- `tools/packs.py` lists the packs: folder, name, manifest UUIDs, skin order and preview colours.
+- `tools/skinlib.py` holds the rig (classic and slim), the HD UV layout (2 texels per unit), automatic UV packing for accessories, rotated cubes and extra bones, cubes that share one texture patch, and the geometry export.
+- `tools/paintkit.py` holds shared painters: fabric, hair/fur, sneakers, boots, gradients, starfields, flames.
+- `tools/skins/<pack>/<skin>.py` holds one skin's cubes and its painted texture.
+- `tools/render/` is a headless three.js viewer. It reads the real `geometry.json` and PNG and follows Bedrock's per-face UV rules, including the flipped `down` face and Blockbench's rotation convention. That makes the previews match what the game draws.

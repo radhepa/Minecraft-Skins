@@ -58,6 +58,14 @@ function cubeGeometry(cube, pivot, tw, th) {
 
 let renderer, scene, camera, bones = {}, model;
 
+// Bedrock rotations in degrees -> three.js, with the same x mirror and ZYX
+// order Blockbench uses for Bedrock models.
+function rotation(r) {
+  const e = new THREE.Euler(0, 0, 0, 'ZYX');
+  if (r) e.set(-r[0] * Math.PI / 180, -r[1] * Math.PI / 180, r[2] * Math.PI / 180, 'ZYX');
+  return e;
+}
+
 async function load(geoUrl, texUrl, identifier) {
   const geo = await (await fetch(geoUrl)).json();
   const def = geo['minecraft:geometry'].find(g => g.description.identifier === identifier);
@@ -72,8 +80,16 @@ async function load(geoUrl, texUrl, identifier) {
   for (const b of def.bones) {
     const g = new THREE.Group();
     g.userData.pivot = b.pivot;
+    g.userData.rest = rotation(b.rotation);
     bones[b.name] = g;
-    for (const c of b.cubes || []) g.add(new THREE.Mesh(cubeGeometry(c, b.pivot, tw, th), mat));
+    for (const c of b.cubes || []) {
+      if (!c.rotation) { g.add(new THREE.Mesh(cubeGeometry(c, b.pivot, tw, th), mat)); continue; }
+      // rotated cube: build it around its own pivot, then place + turn it
+      const m = new THREE.Mesh(cubeGeometry(c, c.pivot, tw, th), mat);
+      m.position.copy(R([c.pivot[0] - b.pivot[0], c.pivot[1] - b.pivot[1], c.pivot[2] - b.pivot[2]]));
+      m.rotation.copy(rotation(c.rotation));
+      g.add(m);
+    }
   }
   for (const b of def.bones) {
     const g = bones[b.name];
@@ -104,7 +120,7 @@ function setup(w, h) {
 
 const DEG = Math.PI / 180;
 function pose(name) {
-  for (const g of Object.values(bones)) g.rotation.set(0, 0, 0);
+  for (const g of Object.values(bones)) g.rotation.copy(g.userData.rest);
   if (name === 'walk') {
     bones.rightArm.rotation.x = 32 * DEG;  bones.leftArm.rotation.x = -32 * DEG;
     bones.rightLeg.rotation.x = -28 * DEG; bones.leftLeg.rotation.x = 28 * DEG;

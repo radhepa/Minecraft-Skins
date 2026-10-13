@@ -1,13 +1,12 @@
 """Render marketing/QA preview sheets.
 
-    python3 tools/make_previews.py                    # every skin + pack lineup
-    python3 tools/make_previews.py boo_hoodie ...     # just these skins
+    python3 tools/make_previews.py solar_system                # every skin + lineup
+    python3 tools/make_previews.py solar_system sol saturn ... # just these skins
 
 Needs `npm install` in tools/render and Playwright's Chromium.
-Outputs go to previews/<skin>/.
+Outputs go to previews/<pack>/<skin>/.
 """
 
-import importlib
 import json
 import os
 import subprocess
@@ -20,10 +19,12 @@ from PIL import Image, ImageDraw, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(HERE, "skins"))
+
+from build_pack import load_skin  # noqa: E402
+from packs import PACKS  # noqa: E402
 
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-BG_IN, BG_OUT = (58, 24, 64), (24, 9, 28)
+STYLE = dict(PACKS["midnight_mischief"]["style"])  # set per pack in main()
 
 
 def font(size):
@@ -37,7 +38,8 @@ def backdrop(w, h):
     yy, xx = np.mgrid[0:h, 0:w]
     d = np.sqrt(((xx - w / 2) / (w * 0.7)) ** 2 + ((yy - h * 0.45) / (h * 0.7)) ** 2)
     t = np.clip(d, 0, 1)[..., None]
-    img = np.array(BG_IN) * (1 - t) + np.array(BG_OUT) * t
+    bg_in, bg_out = STYLE["bg"]
+    img = np.array(bg_in) * (1 - t) + np.array(bg_out) * t
     return Image.fromarray(img.astype(np.uint8), "RGB").convert("RGBA")
 
 
@@ -65,20 +67,20 @@ def sheet(cells, labels, title, cell=(520, 700), cols=None):
     size = 40
     while size > 18 and d.textlength(title, font=font(size)) > W - 40:
         size -= 2
-    d.text((W // 2, 46), title, fill=(236, 200, 255), font=font(size), anchor="mm")
+    d.text((W // 2, 46), title, fill=STYLE["title"], font=font(size), anchor="mm")
     for i, (im, lab) in enumerate(zip(cells, labels)):
         cx, cy = (i % cols) * cell[0], head + (i // cols) * cell[1]
         im = fit(crop_alpha(im), cell[0] - 40, cell[1] - 80)
         out.alpha_composite(im, (cx + (cell[0] - im.width) // 2, cy + (cell[1] - 60 - im.height) // 2))
-        d.text((cx + cell[0] // 2, cy + cell[1] - 34), lab, fill=(255, 170, 70), font=font(26), anchor="mm")
+        d.text((cx + cell[0] // 2, cy + cell[1] - 34), lab, fill=STYLE["label"], font=font(26), anchor="mm")
     return out.convert("RGB")
 
 
-def render(identifier, texture, shots, outdir):
+def render(geometry, identifier, texture, shots, outdir):
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
         json.dump(shots, fh)
     subprocess.run(["node", os.path.join(HERE, "render", "render.mjs"), identifier,
-                    texture, outdir, fh.name], check=True, stdout=subprocess.DEVNULL)
+                    texture, outdir, fh.name, geometry], check=True, stdout=subprocess.DEVNULL)
     os.unlink(fh.name)
     return {s["name"]: Image.open(os.path.join(outdir, s["name"] + ".png")).convert("RGBA")
             for s in shots}
@@ -97,17 +99,19 @@ def texture_sheet(texture, title):
     out = backdrop(canvas.width + 80, canvas.height + 130)
     out.alpha_composite(canvas, (40, 90))
     d = ImageDraw.Draw(out)
-    d.text((out.width // 2, 46), title, fill=(236, 200, 255), font=font(36), anchor="mm")
+    d.text((out.width // 2, 46), title, fill=STYLE["title"], font=font(36), anchor="mm")
     return out.convert("RGB")
 
 
 VIEW = {"dist": 110, "target": 18}
 
 
-def skin_previews(name):
-    mod = importlib.import_module(name)
-    texture = os.path.join(ROOT, "MidnightMischief", mod.TEXTURE)
-    out = os.path.join(ROOT, "previews", name)
+def skin_previews(pack, name):
+    cfg = PACKS[pack]
+    mod = load_skin(pack, name)
+    texture = os.path.join(ROOT, cfg["dir"], mod.TEXTURE)
+    geometry = os.path.join(ROOT, cfg["dir"], "geometry.json")
+    out = os.path.join(ROOT, "previews", pack, name)
     os.makedirs(out, exist_ok=True)
     raw = os.path.join(tempfile.gettempdir(), "skin_shots_" + name)
 
@@ -124,9 +128,9 @@ def skin_previews(name):
     shots = [dict(VIEW, **s) for s in shots]
     details = [dict(VIEW, name="detail_" + key, **cam) for key, _, cam in mod.DETAILS]
     spin = [dict(VIEW, name=f"spin{i:02d}", yaw=i * 15, pitch=8) for i in range(24)]
-    ims = render(mod.ID, texture, shots + details + spin, raw)
+    ims = render(geometry, mod.ID, texture, shots + details + spin, raw)
 
-    title = f"Midnight Mischief - {mod.NAME}"
+    title = f"{cfg['name']} - {mod.NAME}"
     sheet([ims[k] for k in ("front", "right", "back", "left")],
           ["Front", "Right", "Back", "Left"], title + " - Turnaround").save(
         os.path.join(out, "turnaround.png"))
@@ -144,7 +148,7 @@ def skin_previews(name):
 
     ref_box = getattr(mod, "REF_BOX", None)
     if ref_box:
-        ref = Image.open(os.path.join(ROOT, "reference", "midnight_mischief_lineup.webp"))
+        ref = Image.open(os.path.join(ROOT, cfg["reference"]))
         ref = ref.convert("RGBA").crop(ref_box)
         sheet([ref, ims["hero"]], ["Reference art", "Built skin (render)"],
               title + " - Reference vs build", cell=(640, 860)).save(
@@ -161,29 +165,31 @@ def skin_previews(name):
     return mod, ims["hero"]
 
 
-def lineup(entries, cols=6):
+def lineup(pack, entries, cols=6):
     """Pack key art: every skin's hero render in a grid with its name."""
     cw, ch = 400, 600
     rows_n = (len(entries) + cols - 1) // cols
     W, H = cw * cols, ch * rows_n + 150
     out = backdrop(W, H)
     d = ImageDraw.Draw(out)
-    d.text((W // 2, 75), "MIDNIGHT MISCHIEF", fill=(236, 190, 255), font=font(72), anchor="mm")
+    d.text((W // 2, 75), PACKS[pack]["name"].upper(), fill=STYLE["title"], font=font(72), anchor="mm")
     for i, (mod, im) in enumerate(entries):
         cx, cy = (i % cols) * cw, 150 + (i // cols) * ch
         im = fit(crop_alpha(im), cw - 40, ch - 90)
         out.alpha_composite(im, (cx + (cw - im.width) // 2, cy + (ch - 60 - im.height) // 2))
-        d.text((cx + cw // 2, cy + ch - 36), mod.NAME, fill=(255, 170, 70), font=font(28), anchor="mm")
-    out.convert("RGB").save(os.path.join(ROOT, "previews", "lineup.png"))
+        d.text((cx + cw // 2, cy + ch - 36), mod.NAME, fill=STYLE["label"], font=font(28), anchor="mm")
+    out.convert("RGB").save(os.path.join(ROOT, "previews", pack, "lineup.png"))
 
 
 def main():
-    from build_pack import SKINS
-    names = sys.argv[1:] or SKINS
-    entries = [skin_previews(n) for n in names]
-    if not sys.argv[1:]:
-        lineup(entries)
-        print("lineup written to previews/lineup.png")
+    if not sys.argv[1:] or sys.argv[1] not in PACKS:
+        sys.exit("usage: make_previews.py <pack> [skin ...]   packs: " + ", ".join(PACKS))
+    pack, names = sys.argv[1], sys.argv[2:]
+    STYLE.update(PACKS[pack]["style"])
+    entries = [skin_previews(pack, n) for n in names or PACKS[pack]["skins"]]
+    if not names:
+        lineup(pack, entries, cols=min(6, len(entries)))
+        print(f"lineup written to previews/{pack}/lineup.png")
 
 
 if __name__ == "__main__":

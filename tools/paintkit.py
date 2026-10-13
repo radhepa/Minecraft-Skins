@@ -1,4 +1,4 @@
-"""Reusable painting recipes shared by the Midnight Mischief skins."""
+"""Reusable painting recipes shared by every skin pack."""
 
 import numpy as np
 
@@ -182,3 +182,63 @@ def eye_glow(face, cells, core, mid, rim):
     for r, c in cells:
         n = sum((r + dr, c + dc) in s for dr in (-1, 0, 1) for dc in (-1, 0, 1))
         face.set(r, c, core if n >= 9 else (mid if n >= 6 else rim))
+
+
+# ------------------------------------------------------------- space
+def gradient(face, stops, t=None, mask=None):
+    """Blend through colour stops [(pos 0..1, rgb), ...] along t (default:
+    top row 0 -> bottom row 1)."""
+    if t is None:
+        t = face.row / max(face.h - 1, 1)
+    pos = np.array([p for p, _ in stops], float)
+    cols = np.array([c for _, c in stops], float)
+    out = np.stack([np.interp(t, pos, cols[:, k]) for k in range(3)], -1)
+    m = np.ones((face.h, face.w), bool) if mask is None else mask
+    face.rgba[m, :3] = out[m]
+    face.rgba[m, 3] = 255
+
+
+def cells(face, seed, size=3.0):
+    """Cellular pattern (like the sun's granulation). Returns (centre, edge):
+    0 at a cell's centre rising to 1 at its rim, and a True mask on the thin
+    lanes between cells."""
+    rs = np.random.RandomState(seed)
+    n = max(4, int(face.w * face.h / (size * size)))
+    py, px = rs.rand(n) * (face.h + 2) - 1, rs.rand(n) * (face.w + 2) - 1
+    d = np.sqrt((face.row[..., None] - py) ** 2 + (face.col[..., None] - px) ** 2)
+    d.sort(-1)
+    d1, d2 = d[..., 0], d[..., 1]
+    return np.clip(d1 / (size * 0.75), 0, 1), (d2 - d1) < 0.9
+
+
+def starfield(face, seed, density=0.04, colors=((255, 255, 255),), mask=None, twinkle=True):
+    """Scatter single-texel stars, with the odd 4-point twinkle."""
+    rs = np.random.RandomState(seed)
+    hit = rs.rand(face.h, face.w) < density
+    if mask is not None:
+        hit &= mask
+    for r, c in zip(*np.nonzero(hit)):
+        col = colors[rs.randint(len(colors))]
+        face.set(r, c, col)
+        if twinkle and rs.rand() < 0.12:
+            dim = tuple(int(v * 0.7) for v in col)
+            for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                rr, cc = r + dr, c + dc
+                if mask is None or (0 <= rr < face.h and 0 <= cc < face.w and mask[rr, cc]):
+                    face.set(rr, cc, dim)
+
+
+def flame_edge(face, seed, base_row, height=4, period=(3, 6), from_top=True):
+    """Row index per column for a licking-flame silhouette: tongues rise
+    `height` texels above base_row. Texels past the edge are what to clear."""
+    rs = np.random.RandomState(seed)
+    edge = np.zeros(face.w)
+    c = 0
+    while c < face.w:
+        w = rs.randint(period[0], period[1] + 1)
+        tip = rs.uniform(0.45, 1.0) * height
+        xs = np.arange(w)
+        edge[c:c + w] = (tip * np.sin(np.pi * (xs + 0.5) / w) ** 1.6)[:face.w - c]
+        c += w
+    edge = np.round(edge).astype(int)
+    return base_row - edge if from_top else base_row + edge
