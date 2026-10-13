@@ -84,17 +84,22 @@ def paint_head(skin):
     hm = front.row <= np.array(BANGS)[front.col]
     hair(front, HAIR, HAIR_D, HAIR_L, 1801, mask=hm, shine=HAIR_S)
     front.shade(np.where((front.row == np.array(BANGS)[front.col] + 1) & ~hm, 0.88, 1.0))
-    eye = ["EEE", "BhB", "BBB"]
-    pal = {"E": (40, 22, 16), "B": (84, 44, 24), "h": (255, 250, 240)}
-    front.stamp(eye, pal, top=7, left=3)
+    # big glossy eyes: thin lash line, white shine on the outer edge, dark
+    # iris that warms to a lighter brown at the bottom
+    eye = [
+        "EEEE",
+        "WDDD",
+        "WDDD",
+        "WIII",
+    ]
+    pal = {"E": (50, 26, 16), "W": (255, 252, 246), "D": (74, 38, 20), "I": (104, 56, 30)}
+    front.stamp(eye, pal, top=7, left=2)
     front.stamp(eye, pal, top=7, left=10, mirror=True)
-    front.set(7, 2, (40, 22, 16))
-    front.set(7, 13, (40, 22, 16))
-    front.set(10, 7, SKIN_D)
+    front.set(11, 7, SKIN_D)
     front.stamp(["mWWm", ".pp."], {"m": (110, 44, 40), "W": (255, 255, 255), "p": (226, 112, 120)},
-                top=12, left=6)
-    for c in (3, 4, 11, 12):
-        front.set(11, c, (238, 142, 132))
+                top=13, left=6)
+    for c in (2, 3, 12, 13):
+        front.set(12, c, (238, 142, 132))
     for f in ("east", "west", "south", "up"):
         hair(skin.face("head", f), HAIR, HAIR_D, HAIR_L, 1810 + len(f), shine=HAIR_S)
     skin_tone(skin.face("head", "down"), SKIN_D, 1820)
