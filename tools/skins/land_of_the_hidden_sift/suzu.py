@@ -1,6 +1,7 @@
 """Suzu the Field Medic: the village's calm, quick-handed medic, who patches
-up every academy kid and gate guard. A rose-brown bob with a little bun tied
-in a white ribbon, warm hazel eyes, the village headband, a white medic
+up every academy kid and gate guard. Honey-blonde hair parted in the middle
+and worn in two braids tied with teal ribbons, warm amber eyes and a
+soft smile, the village headband, a white medic
 tunic with teal trim and a soul-heart emblem, a matching armband, a leather
 satchel slung across her, bandaged forearms with hands glowing soft healing
 mint, cropped teal trousers and sandals.
@@ -11,7 +12,7 @@ import numpy as np
 from paintkit import SIDES, box, clear_under_shoes, cloth, rows, skin_tone
 from skinlib import Skin, add_standard_body, noise
 
-from .shinobi import (add_headband, add_holster, add_sandals, female_face, hair_head,
+from .shinobi import (EYE_SOFT, add_headband, add_holster, add_sandals, anime_eyes, hair_head,
                       hair_painter, paint_headband, paint_holster, paint_sandals, wraps)
 
 ID = "geometry.LandOfTheHiddenSift.Suzu"
@@ -19,7 +20,7 @@ TEXTURE = "suzu.png"
 NAME = "Suzu the Field Medic"
 LOC = "Suzu"
 DETAILS = [
-    ("face", "Bob with a ribboned bun", {"yaw": 28, "pitch": 4, "dist": 48, "target": 28, "fov": 30}),
+    ("face", "Honey-blonde braids", {"yaw": 28, "pitch": 4, "dist": 48, "target": 28, "fov": 30}),
     ("satchel", "Medic satchel", {"yaw": -50, "pitch": 6, "dist": 56, "target": 15, "fov": 30}),
     ("hands", "Healing glow", {"yaw": 20, "pitch": 0, "dist": 54, "target": 13, "fov": 30}),
 ]
@@ -27,13 +28,13 @@ DETAILS = [
 SKIN = (250, 220, 200)
 SKIN_D = (226, 186, 168)
 BLUSH = (248, 170, 170)
-HAIR = (176, 106, 96)
-HAIR_D = (122, 66, 62)
-HAIR_L = (212, 148, 132)
-LASH = (66, 34, 32)
-EYE_D = (98, 72, 38)
-EYE = (162, 124, 62)
-EYE_L = (216, 186, 116)
+HAIR = (234, 194, 116)
+HAIR_D = (182, 136, 66)
+HAIR_L = (250, 226, 166)
+LASH = (60, 36, 24)
+EYE_D = (150, 98, 30)
+EYE = (216, 162, 60)
+EYE_L = (248, 216, 132)
 WHITE = (255, 255, 255)
 MOUTH = (210, 124, 124)
 TUNIC = (246, 244, 238)
@@ -56,8 +57,16 @@ def build():
     skin = Skin(ID, slim=True)
     add_standard_body(skin)
     add_headband(skin, yc=30.0)
-    skin.acc("bun", "head", [-1.25, 27.0, 4.3], [2.5, 2.5, 2], lowres=("down",))
-    skin.acc("ribbon", "head", [-1.5, 26.6, 5.3], [3, 0.75, 1.1], lowres=SIDES + ("up", "down"))
+    # two braids falling in front of her shoulders, in plaited sections
+    for side, x in (("R", -4.55), ("L", 3.05)):
+        for k in range(3):
+            name = f"braid{side}{k}"
+            kw = dict(like=f"braidR{k % 2}") if (side == "L" or k == 2) else dict(lowres=("up", "down"))
+            skin.acc(name, "head", [x + (0.15 if k % 2 else 0), 21.75 - 2.0 * k, -3.6], [1.5, 2.0, 1.4], **kw)
+        kw = dict(like="tieR") if side == "L" else dict(lowres=SIDES + ("up", "down"))
+        skin.acc(f"tie{side}", "head", [x + 0.1, 15.5, -3.5], [1.3, 0.75, 1.2], **kw)
+        kw = dict(like="tuftR") if side == "L" else dict(lowres=("up", "down"))
+        skin.acc(f"tuft{side}", "head", [x + 0.25, 14.25, -3.45], [1.0, 1.25, 1.1], **kw)
     skin.acc("satchel", "body", [3.6, 10.5, -1.75], [1.5, 3.5, 3.5], lowres=("up", "down"))
     add_holster(skin, "right")
     h = add_sandals(skin)
@@ -76,19 +85,30 @@ def heart(face, top, left, colour=HEART, line=TEAL_D):
 
 
 def paint_head(skin):
-    rose = hair_painter(HAIR, HAIR_D, HAIR_L, shine=(232, 176, 160))
-    # a jaw-length bob: long at the sides, a straight soft fringe
-    hair_head(skin, rose, 9000, SKIN, SKIN_D,
-              [12, 11, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 11, 12], back_bottom=11, long_sides=True)
+    honey = hair_painter(HAIR, HAIR_D, HAIR_L, shine=(255, 240, 196))
+    # parted down the middle, soft locks to the jaw
+    hair_head(skin, honey, 9000, SKIN, SKIN_D,
+              [13, 11, 8, 7, 6, 5, 4, 2, 2, 4, 5, 6, 7, 8, 11, 13], back_bottom=11, long_sides=True)
     front = skin.face("head", "north")
-    female_face(front, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L, "G": EYE_L},
-                MOUTH, blush=BLUSH)
+    anime_eyes(front, 8, EYE_SOFT, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L,
+                                    "G": EYE_L})
+    for c in (2, 3, 12, 13):
+        front.set(12, c, BLUSH)
+    # a soft little smile
+    for r, c in ((13, 6), (14, 7), (14, 8), (13, 9)):
+        front.set(r, c, MOUTH)
     paint_headband(skin)
-    for face in skin.each("bun"):
-        rose(face, 9100 + len(face.face), None)
-    for face in skin.each("ribbon"):
-        face.fill(WHITE)
-        face.fill(TUNIC_D, face.row == face.h - 1)
+    for side in ("R",):
+        for k in range(2):
+            for face in skin.each(f"braid{side}{k}"):
+                honey(face, 9100 + 7 * k + len(face.face), None)
+                # plaits: a darker crossing line through each section
+                face.fill(HAIR_D, (face.row == face.h // 2) | (face.col == (face.row + k) % max(face.w, 1)))
+        for face in skin.each(f"tie{side}"):
+            face.fill(TEAL)
+        for face in skin.each(f"tuft{side}"):
+            honey(face, 9120 + len(face.face), None)
+            face.clear((face.row == face.h - 1) & (face.col % 2 == 1))
 
 
 def paint_gear(skin):

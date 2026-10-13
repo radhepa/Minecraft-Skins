@@ -1,6 +1,7 @@
 """Tobio the Scroll Runner: the fastest messenger in the village, carrying
 sealed scrolls between the outposts of the Sift. Messy sandy hair, sky-blue
-eyes under quick brows, the village headband, a mustard courier vest with a
+eyes under raised brows, a plaster across his nose and an
+easy smile, the village headband, a mustard courier vest with a
 hood bunched at the back over a navy shirt, a crossbody strap holding a big
 message tube on his back, wrapped wrists, knee-length trousers and shin wraps.
 """
@@ -10,15 +11,15 @@ import numpy as np
 from paintkit import SIDES, box, clear_under_shoes, cloth, rows
 from skinlib import Skin, add_standard_body, noise
 
-from .shinobi import (STEEL, add_headband, add_holster, add_sandals, hair_head, hair_painter,
-                      male_face, paint_headband, paint_holster, paint_sandals, wraps)
+from .shinobi import (EYE_SHARP, STEEL, add_headband, add_holster, add_sandals, anime_eyes,
+                      hair_head, hair_painter, paint_headband, paint_holster, paint_sandals, wraps)
 
 ID = "geometry.LandOfTheHiddenSift.Tobio"
 TEXTURE = "tobio.png"
 NAME = "Tobio the Scroll Runner"
 LOC = "Tobio"
 DETAILS = [
-    ("face", "Village headband", {"yaw": 18, "pitch": 4, "dist": 46, "target": 28, "fov": 30}),
+    ("face", "Raised brows + nose plaster", {"yaw": 18, "pitch": 4, "dist": 46, "target": 28, "fov": 30}),
     ("tube", "Message tube + hood", {"yaw": 150, "pitch": 12, "dist": 70, "target": 20, "fov": 30}),
     ("walk", "Courier vest", {"yaw": -30, "pitch": 6}),
 ]
@@ -77,8 +78,21 @@ def paint_head(skin):
     hair_head(skin, sandy, 12000, SKIN, SKIN_D,
               [9, 8, 7, 5, 6, 4, 5, 3, 4, 5, 3, 5, 4, 6, 7, 8], back_bottom=11)
     front = skin.face("head", "north")
-    male_face(front, BROW, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L, "G": EYE_L},
-              MOUTH, mouth_cols=(7, 8))
+    # raised brows that kick up at the outer ends
+    for left, outer in ((2, 1), (10, 14)):
+        for c in range(left, left + 4):
+            front.set(7, c, BROW)
+        front.set(6, outer, BROW)
+    anime_eyes(front, 8, EYE_SHARP, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L,
+                                     "G": EYE_L}, lefts=(2, 10))
+    # a plaster across the bridge of his nose
+    for c in range(5, 11):
+        front.set(11, c, (226, 212, 190) if c in (5, 10) else (252, 244, 228))
+    front.set(11, 7, (232, 218, 196))
+    front.set(11, 8, (232, 218, 196))
+    # a quick, easy smile
+    for r, c in ((13, 6), (14, 7), (14, 8), (13, 9)):
+        front.set(r, c, MOUTH)
     paint_headband(skin)
 
 

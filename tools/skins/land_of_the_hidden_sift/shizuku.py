@@ -1,7 +1,8 @@
 """Shizuku the Ichor Weaver: the Soul-Infused poisoner, who draws the
 glowing coral ichor out of the Sift's toxic pools and spins it into traps.
-Long plum hair fading to glowing coral at the ends, worn in two low tails,
-glowing pink eyes with a beauty mark, her slashed headband worn round her
+Plum hair in a sleek high bun pinned with two ichor-tipped hairpins, a
+blunt hime-cut fringe with long side locks fading to glowing coral, glowing
+pink eyes, dark lips and a beauty mark, her slashed headband worn round her
 neck, a high-collared plum dress dripping with ichor, long dark gloves,
 a bandolier of ichor vials and stained tights.
 """
@@ -11,7 +12,7 @@ import numpy as np
 from paintkit import SIDES, box, clear_under_shoes, cloth, gradient, rows, skin_tone
 from skinlib import Skin, add_standard_body, noise
 
-from .shinobi import (add_neckband, add_sandals, female_face, hair_head, hair_painter,
+from .shinobi import (EYE_SOFT, add_neckband, add_sandals, anime_eyes, hair_head, hair_painter,
                       paint_neckband, paint_sandals)
 
 ID = "geometry.LandOfTheHiddenSift.Shizuku"
@@ -19,7 +20,7 @@ TEXTURE = "shizuku.png"
 NAME = "Shizuku the Ichor Weaver"
 LOC = "Shizuku"
 DETAILS = [
-    ("face", "Ombre tails + slashed neckband", {"yaw": 24, "pitch": 4, "dist": 50, "target": 26, "fov": 30}),
+    ("face", "Hime cut, high bun + hairpins", {"yaw": 24, "pitch": 4, "dist": 50, "target": 26, "fov": 30}),
     ("vials", "Ichor vials", {"yaw": -30, "pitch": 6, "dist": 52, "target": 13, "fov": 30}),
     ("back34", "Dripping ichor", {"yaw": 160, "pitch": 10}),
 ]
@@ -49,10 +50,15 @@ SANDAL_D = (22, 14, 28)
 def build():
     skin = Skin(ID, slim=True)
     add_standard_body(skin)
-    # two low tails tied behind her ears
-    for side, x in (("R", -4.6), ("L", 3.35)):
-        kw = dict(like="tailR") if side == "L" else dict(lowres=("up", "down"))
-        skin.acc(f"tail{side}", "head", [x, 18.0, 1.0], [1.25, 7.5, 1.75], **kw)
+    # sleek high bun with two crossed hairpins
+    skin.acc("bun", "head", [-1.75, 31.75, 0.25], [3.5, 2.75, 3.5], lowres=("down",))
+    for side, rz in (("R", 68), ("L", -68)):
+        kw = dict(like="pinR") if side == "L" else dict(lowres=SIDES + ("up", "down"))
+        skin.acc(f"pin{side}", "head", [-0.25, 30.5, 1.75], [0.5, 5.5, 0.5], rotation=[0, 0, rz],
+                 pivot=[0, 33.0, 2.0], **kw)
+    # long side locks framing her face, hime-cut
+    skin.acc("lockR", "head", [-4.85, 21.0, -4.4], [1.0, 7.5, 1.4], lowres=("up", "down"))
+    skin.acc("lockL", "head", [3.85, 21.0, -4.4], [1.0, 7.5, 1.4], like="lockR")
     add_neckband(skin)
     # bandolier of ichor vials across her hips
     for i, x in enumerate((-3.4, -1.9, -0.4)):
@@ -82,19 +88,25 @@ def ombre(face, seed, mask=None, fade_from=None):
 
 def paint_head(skin):
     plum = lambda face, seed, mask: ombre(face, seed, mask, fade_from=26.0)
-    hair_head(skin, plum, 15000, SKIN, SKIN_D,
-              [13, 12, 8, 6, 5, 5, 4, 4, 4, 4, 5, 5, 6, 8, 12, 13], back_bottom=11, long_sides=True)
+    # blunt, straight fringe; the hair is swept up into the bun behind
+    hair_head(skin, plum, 15000, SKIN, SKIN_D, [6] * 16, back_bottom=11, long_sides=True)
     front = skin.face("head", "north")
-    female_face(front, {"L": LASH, "W": (250, 240, 246), "D": ICHOR_D, "E": ICHOR, "H": ICHOR_C,
-                        "G": ICHOR_C}, MOUTH)
-    front.set(12, 12, MARK)                       # beauty mark
-    for side in ("R",):
-        for face in skin.each(f"tail{side}"):
-            ombre(face, 15100 + len(face.face), fade_from=22.5)
-        for f in SIDES:
-            face = skin.face(f"tail{side}", f)
-            face.clear((face.row == face.h - 1) & (face.col % 2 == 0))
-            face.fill(DRESS_L, face.row <= 1)      # hair tie
+    anime_eyes(front, 8, EYE_SOFT, {"L": LASH, "W": (250, 240, 246), "D": ICHOR_D, "E": ICHOR,
+                                    "H": ICHOR_C, "G": ICHOR_C})
+    # dark lips and a beauty mark
+    for c in (7, 8):
+        front.set(13, c, MOUTH)
+    front.set(12, 12, MARK)
+    for face in skin.each("bun"):
+        ombre(face, 15100 + len(face.face))
+    skin.face("bun", "up").fill(HAIR_D, np.abs(skin.face("bun", "up").col - 3.5) < 0.6)
+    for face in skin.each("pinR"):
+        face.fill((214, 170, 86))
+        face.fill(ICHOR, face.row >= face.h - 2)
+        face.fill(ICHOR_C, face.row == face.h - 1)
+    for face in skin.each("lockR"):
+        ombre(face, 15110 + len(face.face), fade_from=25.0)
+        face.clear((face.row == face.h - 1) & (face.col % 2 == 0))
 
 
 def drips(face, top, seed, count=5, colour=ICHOR):

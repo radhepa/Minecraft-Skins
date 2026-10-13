@@ -1,6 +1,7 @@
 """Kaede the Blade Smith: forges every kunai and blade in the village and
-will tell you exactly what you did wrong to the last one. Auburn hair in a
-high ponytail, green eyes, a soot smudge on her cheek, the village headband,
+will tell you exactly what you did wrong to the last one. A short auburn
+pixie cut with one long swept bang, green eyes under strong brows,
+freckled cheeks, a smirk and a soot smudge on her cheek, the village headband,
 a charcoal tank top under a leather forge apron with tool pockets, bare
 arms with one heavy leather glove and a wrapped forearm, work trousers and
 her forging hammer in hand.
@@ -11,17 +12,17 @@ import numpy as np
 from paintkit import SIDES, box, clear_under_shoes, cloth, rows, skin_tone
 from skinlib import Skin, add_standard_body, noise
 
-from .shinobi import (STEEL, STEEL_D, STEEL_L, add_headband, add_sandals, female_face,
-                      hair_head, hair_painter, paint_headband, paint_sandals, wraps)
+from .shinobi import (EYE_SOFT, STEEL, STEEL_D, STEEL_L, add_headband, add_sandals, anime_eyes,
+                      brows, hair_head, hair_painter, paint_headband, paint_sandals, wraps)
 
 ID = "geometry.LandOfTheHiddenSift.Kaede"
 TEXTURE = "kaede.png"
 NAME = "Kaede the Blade Smith"
 LOC = "Kaede"
 DETAILS = [
-    ("face", "High ponytail + soot smudge", {"yaw": 30, "pitch": 4, "dist": 52, "target": 28, "fov": 30}),
+    ("face", "Pixie cut, freckles + soot", {"yaw": 30, "pitch": 4, "dist": 52, "target": 28, "fov": 30}),
     ("hammer", "Forging hammer + glove", {"yaw": 50, "pitch": 4, "dist": 56, "target": 10, "fov": 30}),
-    ("back34", "Ponytail + apron ties", {"yaw": 160, "pitch": 10}),
+    ("back34", "Apron ties", {"yaw": 160, "pitch": 10}),
 ]
 
 SKIN = (244, 210, 182)
@@ -54,11 +55,7 @@ SANDAL_D = (44, 32, 24)
 def build():
     skin = Skin(ID, slim=True)
     add_standard_body(skin)
-    add_headband(skin, yc=29.8)
-    # high ponytail tied at the crown, falling down her back
-    skin.acc("tie", "head", [-1.0, 31.0, 3.6], [2, 1.5, 1.5], lowres=SIDES + ("up", "down"))
-    skin.acc("ponytail", "head", [-1.25, 24.0, 4.4], [2.5, 7.5, 1.75], rotation=[16, 0, 0],
-             pivot=[0, 31.5, 5.0], lowres=("up", "down"))
+    add_headband(skin, yc=30.5)
     # forging hammer hanging from her gloved right hand
     skin.acc("haft", "rightArm", [-5.85, 6.0, -0.35], [0.7, 6.5, 0.7], lowres=SIDES + ("up", "down"))
     skin.acc("hammerHead", "rightArm", [-7.25, 4.5, -1.25], [3.5, 1.75, 2.25], lowres=("up", "down"))
@@ -74,21 +71,22 @@ def build():
 
 def paint_head(skin):
     auburn = hair_painter(HAIR, HAIR_D, HAIR_L, shine=(246, 168, 112))
+    # a short pixie cut: cropped at the nape, one long bang swept to her right
     hair_head(skin, auburn, 11000, SKIN, SKIN_D,
-              [10, 9, 7, 6, 5, 4, 4, 3, 3, 3, 4, 4, 5, 6, 8, 9], back_bottom=10)
+              [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 3, 5, 6], back_bottom=9)
     front = skin.face("head", "north")
-    female_face(front, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L, "G": EYE_L}, MOUTH)
+    brows(front, 6, HAIR_D, lefts=(2, 10))
+    anime_eyes(front, 8, EYE_SOFT, {"L": LASH, "W": WHITE, "D": EYE_D, "E": EYE, "H": EYE_L, "G": EYE_L})
+    # freckles across her cheeks
+    for r, c in ((12, 3), (12, 5), (12, 10), (12, 12)):
+        front.set(r, c, (214, 150, 118))
+    # a small lopsided smirk, one corner lifted
+    for r, c in ((14, 7), (14, 8), (13, 9)):
+        front.set(r, c, MOUTH)
     # a soot smudge on her left cheek
-    for r, c in ((12, 12), (12, 13), (13, 13)):
+    for r, c in ((14, 13), (14, 14), (15, 14)):
         front.set(r, c, SOOT)
     paint_headband(skin)
-    for face in skin.each("ponytail"):
-        auburn(face, 11100 + len(face.face), None)
-    for f in SIDES:
-        face = skin.face("ponytail", f)
-        face.clear((face.row == face.h - 1) & (face.col % 2 == 1))
-    for face in skin.each("tie"):
-        face.fill(TANK)
 
 
 def paint_gear(skin):

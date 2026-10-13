@@ -60,21 +60,21 @@ One alien from every world in the Solar System except Earth, in order from the S
 
 ## Land of the Hidden Sift
 
-A hidden shinobi village inside the Sift, the soul-filled dimension reached through rifts deep underground. Faces follow the usual Minecraft skin look: clean anime eyes (soft and lashed for the women, sharper under thick brows for the men) and a small, subtle mouth. Its people are original side characters: villagers who wear the village headband (the crest is a rift splitting a diamond), and the Soul-Infused rogue ninja who went too deep into the rifts and wear theirs slashed through.
+A hidden shinobi village inside the Sift, the soul-filled dimension reached through rifts deep underground. Faces follow the usual Minecraft skin look: clean anime eyes (soft and lashed for the women, sharper under thick brows for the men) and a small, subtle mouth. Every character shares that eye style; hair, brows, freckles, marks and mouths make each face their own. Its people are original side characters: villagers who wear the village headband (the crest is a rift splitting a diamond), and the Soul-Infused rogue ninja who went too deep into the rifts and wear theirs slashed through.
 
 | Skin | Role | Arms | 3D extras |
 | --- | --- | --- | --- |
 | Kenji the Academy Hopeful | Villager | Classic | Village headband with tails, training scroll on his back, belt pouch, steel armguard, thigh holster, open-toed sandals |
 | Mio the Blub Keeper | Villager | Slim | A Blub riding on her shoulder, long hair and face-framing locks, meadow-flower hairpin, headband worn as a neckband, obi bow |
 | Gennai the Noodle Chef | Villager | Classic | Knotted bandana with tails, giant ladle |
-| Suzu the Field Medic | Villager | Slim | Village headband, ribboned bun, medic satchel, healing glow on her hands, thigh holster |
+| Suzu the Field Medic | Villager | Slim | Village headband, honey-blonde braids tied with teal ribbons, medic satchel, healing glow on her hands, thigh holster |
 | Daichi the Gate Warden | Villager | Classic | Wide straw kasa over the village headband, iron-capped staff |
-| Kaede the Blade Smith | Villager | Slim | Village headband, high ponytail, forging hammer, flared leather glove cuff |
+| Kaede the Blade Smith | Villager | Slim | Village headband over a short pixie cut, forging hammer, flared leather glove cuff |
 | Tobio the Scroll Runner | Villager | Classic | Village headband, bunched hood, message tube slung across his back, thigh holster |
 | Jubei the Archivist | Villager | Classic | Long beard, bundle of scrolls on his back, scrolls tucked in his sash, walking cane |
 | Kurogane the Soul-Bound | Villain | Slim | Slashed headband, low ponytail, coat with soul-flame hem and tattered tails, Carapace chitin pauldron, floating soul wisps |
 | Itsuki the Rift Stalker | Villain | Classic | Hood with a trailing point over a slashed headband, trailing scarf, crystal rift dagger, floating rift shard |
-| Shizuku the Ichor Weaver | Villain | Slim | Two low ombre tails, slashed headband worn as a neckband, bandolier of glowing ichor vials |
+| Shizuku the Ichor Weaver | Villain | Slim | High bun with crossed ichor-tipped hairpins, hime-cut side locks, slashed headband worn as a neckband, bandolier of glowing ichor vials |
 | Gozu the Carapace Brute | Villain | Classic | Horned chitin helmet, chest plate, pauldrons and spiked gauntlets, heavy boots |
 
 ## Previews
