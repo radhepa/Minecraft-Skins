@@ -186,6 +186,8 @@ class Skin:
         before the rest (for wide faces that need the one wide free strip).
         `same` maps a face to another face of this cube whose texels it
         reuses (e.g. the back of a symmetric plate), at no texture cost."""
+        if any(c.name == name for c in self.cubes):
+            raise ValueError(f"cube name {name!r} is already used")
         if like is not None:
             src = next(c for c in self.cubes if c.name == like)
             return self.add(Cube(name, bone, origin, size, src.rects, inflate,

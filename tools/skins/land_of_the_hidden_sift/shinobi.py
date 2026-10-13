@@ -287,3 +287,75 @@ def paint_neckband(skin, cloth=(BAND, BAND_D, BAND_L), slashed=False):
         rows(face, 0, 0, light)
         rows(face, r1 - 1, r1 - 1, dark)
     _paint_plate(skin, slashed)
+
+
+# ------------------------------------------------------------- faces + hair
+def male_face(front, brow, eye_pal, mouth, eyes_top=8, mouth_row=13, slant=False,
+              mouth_cols=(7, 9)):
+    """Thick brows, EYE_SHARP eyes and a short straight mouth."""
+    brows(front, eyes_top - 1, brow, slant=slant)
+    anime_eyes(front, eyes_top, EYE_SHARP, eye_pal, lefts=(2, 10))
+    rows(front, mouth_row, mouth_row, mouth, (front.col >= mouth_cols[0]) & (front.col <= mouth_cols[1]))
+
+
+def female_face(front, eye_pal, mouth, blush=None, eyes_top=8, mouth_row=13):
+    """EYE_SOFT eyes, a touch of blush and a tiny two-texel mouth."""
+    anime_eyes(front, eyes_top, EYE_SOFT, eye_pal)
+    if blush is not None:
+        for c in (1, 2, 13, 14):
+            front.set(eyes_top + 4, c, blush)
+    front.set(mouth_row, 7, mouth)
+    front.set(mouth_row, 8, mouth)
+
+
+def hair_head(skin, painter, seed, skin_col, skin_dark, fringe, back_bottom=11,
+              long_sides=False, hat_sides=True):
+    """Skin and hair on the head, then a hat-layer hair shell: `fringe` gives,
+    per front column, the last hat row the fringe reaches. Short hair shows
+    the ear; `long_sides` keeps hair over it."""
+    from paintkit import skin_tone
+    front = skin.face("head", "north")
+    skin_tone(front, skin_col, seed, var=0.012)
+    painter(front, seed + 1, front.row <= 6)
+    for f in ("east", "west", "south", "up"):
+        face = skin.face("head", f)
+        skin_tone(face, skin_col, seed + 10 + len(f))
+        if f in ("south", "up"):
+            painter(face, seed + 20 + len(f), None)
+        elif long_sides:
+            painter(face, seed + 30 + len(f), (face.Z > -2.5) | (face.row <= 6))
+        else:
+            ear = (face.row >= 8) & (face.row <= 11) & (np.abs(face.Z + 0.5) <= 1.5)
+            painter(face, seed + 30 + len(f), (((face.Z > -1) & (face.row <= back_bottom)) | (face.row <= 6)) & ~ear)
+            face.fill(skin_dark, ear & (np.abs(face.Z + 0.5) <= 0.6) & (face.row >= 9) & (face.row <= 10))
+    if not long_sides:
+        back = skin.face("head", "south")
+        back.fill(skin_col, back.row > back_bottom + 1)
+    skin_tone(skin.face("head", "down"), skin_dark, seed + 40)
+    for face in skin.each("hat"):
+        face.clear()
+    painter(skin.face("hat", "up"), seed + 50, None)
+    hf = skin.face("hat", "north")
+    painter(hf, seed + 51, None)
+    hf.clear(hf.row > np.array(fringe)[hf.col])
+    for f in ("east", "west", "south"):
+        face = skin.face("hat", f)
+        if not hat_sides and f != "south":
+            painter(face, seed + 52 + len(f), face.row <= 6)
+            continue
+        painter(face, seed + 52 + len(f), None)
+        bottom = (back_bottom + 2 if long_sides else back_bottom) + (face.col % 4 == 1)
+        face.clear(face.row > bottom)
+        if f != "south":
+            if long_sides:
+                face.clear((face.Z < -1.5) & (face.Z > -4.0) & (face.row > 4))
+            else:
+                face.clear((face.Z < -1.0) & (face.Z > -3.8) & (face.row > 5))
+
+
+def hair_painter(base, dark, light, shine=None):
+    from paintkit import hair
+
+    def paint(face, seed, mask):
+        hair(face, base, dark, light, seed, mask=mask, shine=shine)
+    return paint

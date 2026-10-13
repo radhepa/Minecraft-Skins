@@ -13,9 +13,63 @@
       "type": "paid"
     },
     {
+      "localization_name": "Gennai",
+      "geometry": "geometry.LandOfTheHiddenSift.Gennai",
+      "texture": "gennai.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Suzu",
+      "geometry": "geometry.LandOfTheHiddenSift.Suzu",
+      "texture": "suzu.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Daichi",
+      "geometry": "geometry.LandOfTheHiddenSift.Daichi",
+      "texture": "daichi.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Kaede",
+      "geometry": "geometry.LandOfTheHiddenSift.Kaede",
+      "texture": "kaede.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Tobio",
+      "geometry": "geometry.LandOfTheHiddenSift.Tobio",
+      "texture": "tobio.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Jubei",
+      "geometry": "geometry.LandOfTheHiddenSift.Jubei",
+      "texture": "jubei.png",
+      "type": "paid"
+    },
+    {
       "localization_name": "Kurogane",
       "geometry": "geometry.LandOfTheHiddenSift.Kurogane",
       "texture": "kurogane.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Itsuki",
+      "geometry": "geometry.LandOfTheHiddenSift.Itsuki",
+      "texture": "itsuki.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Shizuku",
+      "geometry": "geometry.LandOfTheHiddenSift.Shizuku",
+      "texture": "shizuku.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Gozu",
+      "geometry": "geometry.LandOfTheHiddenSift.Gozu",
+      "texture": "gozu.png",
       "type": "paid"
     }
   ],

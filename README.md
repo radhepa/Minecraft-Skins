@@ -6,7 +6,7 @@ Bedrock Edition skin packs with HD textures and custom 3D geometry.
 | --- | --- | --- |
 | Midnight Mischief | `MidnightMischief/` | 12 Halloween characters |
 | Solar System | `SolarSystem/` | 10 aliens from the Sun, the planets, the Moon and Pluto |
-| Land of the Hidden Sift | `LandOfTheHiddenSift/` | Anime-style shinobi of a village hidden in the Sift (in progress: 3 of 12) |
+| Land of the Hidden Sift | `LandOfTheHiddenSift/` | 12 anime-style shinobi of a village hidden in the Sift: 8 villagers and 4 rogue villains |
 
 Each pack folder is the skin pack itself. You can zip it or drop it into the Marketplace submission:
 
@@ -66,7 +66,16 @@ A hidden shinobi village inside the Sift, the soul-filled dimension reached thro
 | --- | --- | --- | --- |
 | Kenji the Academy Hopeful | Villager | Classic | Village headband with tails, training scroll on his back, belt pouch, steel armguard, thigh holster, open-toed sandals |
 | Mio the Blub Keeper | Villager | Slim | A Blub riding on her shoulder, long hair and face-framing locks, meadow-flower hairpin, headband worn as a neckband, obi bow |
+| Gennai the Noodle Chef | Villager | Classic | Knotted bandana with tails, giant ladle |
+| Suzu the Field Medic | Villager | Slim | Village headband, ribboned bun, medic satchel, healing glow on her hands, thigh holster |
+| Daichi the Gate Warden | Villager | Classic | Wide straw kasa over the village headband, iron-capped staff |
+| Kaede the Blade Smith | Villager | Slim | Village headband, high ponytail, forging hammer, flared leather glove cuff |
+| Tobio the Scroll Runner | Villager | Classic | Village headband, bunched hood, message tube slung across his back, thigh holster |
+| Jubei the Archivist | Villager | Classic | Long beard, bundle of scrolls on his back, scrolls tucked in his sash, walking cane |
 | Kurogane the Soul-Bound | Villain | Slim | Slashed headband, low ponytail, coat with soul-flame hem and tattered tails, Carapace chitin pauldron, floating soul wisps |
+| Itsuki the Rift Stalker | Villain | Classic | Hood with a trailing point over a slashed headband, trailing scarf, crystal rift dagger, floating rift shard |
+| Shizuku the Ichor Weaver | Villain | Slim | Two low ombre tails, slashed headband worn as a neckband, bandolier of glowing ichor vials |
+| Gozu the Carapace Brute | Villain | Classic | Horned chitin helmet, chest plate, pauldrons and spiked gauntlets, heavy boots |
 
 ## Previews
 

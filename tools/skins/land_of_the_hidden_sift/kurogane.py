@@ -62,7 +62,7 @@ def build():
              pivot=[0, 24.75, 5.2], lowres=("up", "down"))
     # long coat: tattered tails behind, open flaps in front
     for side, x in (("R", -4.25), ("L", 0.0)):
-        skin.acc(f"tail{side}", "body", [x, 4.0, 1.95], [4.25, 8, 0.45],
+        skin.acc(f"coatTail{side}", "body", [x, 4.0, 1.95], [4.25, 8, 0.45],
                  lowres=("north", "up", "down", "east", "west"))
     skin.acc("flapR", "body", [-4.25, 6.0, -2.4], [3.25, 6, 0.4], lowres=("south", "up", "down", "east", "west"))
     skin.acc("flapL", "body", [1.0, 6.0, -2.4], [3.25, 6, 0.4], like="flapR")
@@ -168,7 +168,7 @@ def soul_flames(face, base_row, seed):
 
 def paint_gear(skin):
     for side in ("R", "L"):
-        face = skin.face(f"tail{side}", "south")
+        face = skin.face(f"coatTail{side}", "south")
         cloth(face, COAT, 6100 + len(side), var=0.04, fold=0.05)
         soul_flames(face, face.h - 3, 6110 + ord(side))
         # tattered hem
@@ -176,7 +176,7 @@ def paint_gear(skin):
         cut = rs.rand(face.w) < 0.4
         face.clear((face.row == face.h - 1) & cut)
         for f in ("north", "up", "down", "east", "west"):
-            skin.face(f"tail{side}", f).fill(COAT_D)
+            skin.face(f"coatTail{side}", f).fill(COAT_D)
     flap = skin.face("flapR", "north")
     cloth(flap, COAT, 6130, var=0.04, fold=0.05)
     soul_flames(flap, flap.h - 3, 6131)
