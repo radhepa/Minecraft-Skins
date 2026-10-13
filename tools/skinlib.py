@@ -175,12 +175,14 @@ class Skin:
         self.bones.append(b)
 
     def acc(self, name, bone, origin, size, inflate=0.0, faces=FACES, px=PX, lowres=(),
-            rotation=None, pivot=None, like=None):
+            rotation=None, pivot=None, like=None, pad=()):
         """Add an accessory cube; its face UVs are packed into free texture
         space automatically when the skin is composed. Faces listed in
         `lowres` (plain soles, linings, hidden tops) use 1 texel per unit.
         `like` names an earlier cube of the same size whose UVs (and paint)
-        this one reuses, which costs no texture space."""
+        this one reuses, which costs no texture space. Faces listed in `pad`
+        keep a clear texel all round so cut-out shapes never pick up a
+        neighbour's colour along their edges."""
         if like is not None:
             src = next(c for c in self.cubes if c.name == like)
             return self.add(Cube(name, bone, origin, size, src.rects, inflate,
@@ -189,6 +191,7 @@ class Skin:
         for f in faces:
             rects.update(packed_rects(size, {f: (0, 0)}, px=1 if f in lowres else px))
         cube = self.add(Cube(name, bone, origin, size, rects, inflate, rotation, pivot))
+        cube.pad = tuple(pad)
         self.auto.append(cube)
         return cube
 
@@ -206,7 +209,8 @@ class Skin:
         jobs.sort(key=lambda j: (-abs(j[0].rects[j[1]][3]), -abs(j[0].rects[j[1]][2])))
         for c, f in jobs:
             _, _, uw, vh = c.rects[f]
-            w, h = abs(int(uw)), abs(int(vh))
+            p = 1 if f in getattr(c, "pad", ()) else 0
+            w, h = abs(int(uw)) + 2 * p, abs(int(vh)) + 2 * p
             spot = None
             for y in range(TEX - h + 1):
                 row = used[y:y + h]
@@ -220,6 +224,7 @@ class Skin:
                 raise ValueError(f"no texture space left for {c.name}.{f}")
             x, y = spot
             used[y:y + h, x:x + w] = True
+            x, y, w, h = x + p, y + p, w - 2 * p, h - 2 * p
             c.rects[f] = (x, y + h, w, -h) if f == "down" else (x, y, w, h)
         self.packed = True
 

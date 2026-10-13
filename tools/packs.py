@@ -26,7 +26,7 @@ PACKS = {
         "header_uuid": "4b7b6c14-5d28-4b59-8c7d-bf0b130d8f6a",
         "module_uuid": "6c4d82ac-a74a-485d-9575-b220ce2b81af",
         "version": [1, 0, 0],
-        "skins": ["sol", "saturna", "neptide"],
+        "skins": ["sol", "zippy", "vesper", "luna", "rusty", "jovi", "saturna", "glacia", "neptide", "pip"],
         "style": {"bg": ((26, 34, 74), (6, 7, 22)), "title": (196, 220, 255),
                   "label": (255, 204, 92)},
     },

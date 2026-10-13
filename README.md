@@ -5,7 +5,7 @@ Bedrock Edition skin packs with HD textures and custom 3D geometry.
 | Pack | Folder | Skins |
 | --- | --- | --- |
 | Midnight Mischief | `MidnightMischief/` | 12 Halloween characters |
-| Solar System | `SolarSystem/` | Aliens from the Sun, planets, Moon and Pluto (in progress) |
+| Solar System | `SolarSystem/` | 10 aliens from the Sun, the planets, the Moon and Pluto |
 
 Each pack folder is the skin pack itself. You can zip it or drop it into the Marketplace submission:
 
@@ -42,11 +42,20 @@ The first 8 skins follow the line-up art in `reference/`; the last 4 are origina
 
 ## Solar System
 
+One alien from every world in the Solar System except Earth, in order from the Sun outward.
+
 | Skin | Home | Arms | 3D extras |
 | --- | --- | --- | --- |
 | Sol the Sun King | The Sun | Classic | Corona of 16 rays behind the head, flame-hemmed cape, gold pauldrons, gold boots |
+| Zippy | Mercury | Classic | Racing helmet with feathered wings, winged sneakers |
+| Vesper | Venus | Slim | Puffy cloud hair and cloud bun, heart-tipped antennae, cloud skirt, cloud boots |
+| Luna | The Moon | Slim | Crescent-moon hair clip with stars, life-support backpack, suit collar, moon boots |
+| Rusty | Mars | Classic | Antennae with glowing bulbs, dust goggles, backpack with a radar dish, hiking boots |
+| Jovi | Jupiter | Classic | Io, Europa, Ganymede and Callisto orbiting his head, thundercloud shoulder pads, boots |
 | Saturna | Saturn | Slim | Tilted 16-sided ring with the Cassini gap and a tiny moon, space buns, pointed ears, flared skirt, platform boots |
+| Glacia | Uranus | Slim | Ice-crystal tiara and shoulder crystals, sideways ponytail, icicle skirt, fur boots |
 | Neptide | Neptune | Classic | Gold trident across the back, dorsal-fin crest, fin ears, forearm + calf fins, webbed feet |
+| Pip | Pluto | Classic | Fur-trimmed hood, antennae, Charon the moon buddy, mittens, fur-cuffed snow boots |
 
 ## Previews
 

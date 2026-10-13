@@ -188,7 +188,8 @@ def main():
     STYLE.update(PACKS[pack]["style"])
     entries = [skin_previews(pack, n) for n in names or PACKS[pack]["skins"]]
     if not names:
-        lineup(pack, entries, cols=min(6, len(entries)))
+        n = len(entries)
+        lineup(pack, entries, cols=5 if n > 6 and n % 5 == 0 else min(6, n))
         print(f"lineup written to previews/{pack}/lineup.png")
 
 

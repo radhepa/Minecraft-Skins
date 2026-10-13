@@ -7,15 +7,57 @@
       "type": "paid"
     },
     {
+      "localization_name": "Zippy",
+      "geometry": "geometry.SolarSystem.Zippy",
+      "texture": "zippy.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Vesper",
+      "geometry": "geometry.SolarSystem.Vesper",
+      "texture": "vesper.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Luna",
+      "geometry": "geometry.SolarSystem.Luna",
+      "texture": "luna.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Rusty",
+      "geometry": "geometry.SolarSystem.Rusty",
+      "texture": "rusty.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Jovi",
+      "geometry": "geometry.SolarSystem.Jovi",
+      "texture": "jovi.png",
+      "type": "paid"
+    },
+    {
       "localization_name": "Saturna",
       "geometry": "geometry.SolarSystem.Saturna",
       "texture": "saturna.png",
       "type": "paid"
     },
     {
+      "localization_name": "Glacia",
+      "geometry": "geometry.SolarSystem.Glacia",
+      "texture": "glacia.png",
+      "type": "paid"
+    },
+    {
       "localization_name": "Neptide",
       "geometry": "geometry.SolarSystem.Neptide",
       "texture": "neptide.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Pip",
+      "geometry": "geometry.SolarSystem.Pip",
+      "texture": "pip.png",
       "type": "paid"
     }
   ],
