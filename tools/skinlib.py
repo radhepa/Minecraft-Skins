@@ -175,14 +175,17 @@ class Skin:
         self.bones.append(b)
 
     def acc(self, name, bone, origin, size, inflate=0.0, faces=FACES, px=PX, lowres=(),
-            rotation=None, pivot=None, like=None, pad=()):
+            rotation=None, pivot=None, like=None, pad=(), first=False, same=None):
         """Add an accessory cube; its face UVs are packed into free texture
         space automatically when the skin is composed. Faces listed in
         `lowres` (plain soles, linings, hidden tops) use 1 texel per unit.
         `like` names an earlier cube of the same size whose UVs (and paint)
         this one reuses, which costs no texture space. Faces listed in `pad`
         keep a clear texel all round so cut-out shapes never pick up a
-        neighbour's colour along their edges."""
+        neighbour's colour along their edges. `first` packs this cube's faces
+        before the rest (for wide faces that need the one wide free strip).
+        `same` maps a face to another face of this cube whose texels it
+        reuses (e.g. the back of a symmetric plate), at no texture cost."""
         if like is not None:
             src = next(c for c in self.cubes if c.name == like)
             return self.add(Cube(name, bone, origin, size, src.rects, inflate,
@@ -190,8 +193,13 @@ class Skin:
         rects = {}
         for f in faces:
             rects.update(packed_rects(size, {f: (0, 0)}, px=1 if f in lowres else px))
-        cube = self.add(Cube(name, bone, origin, size, rects, inflate, rotation, pivot))
+        same = dict(same or {})
+        cube = Cube(name, bone, origin, size, {f: r for f, r in rects.items() if f not in same},
+                    inflate, rotation, pivot)
+        self.add(cube)
+        cube.same = same
         cube.pad = tuple(pad)
+        cube.first = first
         self.auto.append(cube)
         return cube
 
@@ -206,7 +214,7 @@ class Skin:
                 u0, v0 = int(min(u, u + uw)), int(min(v, v + vh))
                 used[v0:v0 + abs(int(vh)), u0:u0 + abs(int(uw))] = True
         jobs = [(c, f) for c in self.auto for f in c.rects]
-        jobs.sort(key=lambda j: (-abs(j[0].rects[j[1]][3]), -abs(j[0].rects[j[1]][2])))
+        jobs.sort(key=lambda j: (not j[0].first, -abs(j[0].rects[j[1]][3]), -abs(j[0].rects[j[1]][2])))
         for c, f in jobs:
             _, _, uw, vh = c.rects[f]
             p = 1 if f in getattr(c, "pad", ()) else 0
@@ -283,7 +291,10 @@ class Skin:
                 if c.rotation:
                     cube["pivot"] = c.pivot
                     cube["rotation"] = c.rotation
-                rects = c.like.rects if c.like is not None else c.rects
+                src = c.like if c.like is not None else c
+                rects = dict(src.rects)
+                for f, g in getattr(src, "same", {}).items():
+                    rects[f] = rects[g]
                 cube["uv"] = {
                     f: {"uv": [r[0], r[1]], "uv_size": [r[2], r[3]]}
                     for f, r in rects.items()

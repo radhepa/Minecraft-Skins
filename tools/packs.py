@@ -30,4 +30,14 @@ PACKS = {
         "style": {"bg": ((26, 34, 74), (6, 7, 22)), "title": (196, 220, 255),
                   "label": (255, 204, 92)},
     },
+    "land_of_the_hidden_sift": {
+        "dir": "LandOfTheHiddenSift",
+        "name": "Land of the Hidden Sift",
+        "header_uuid": "dbed8acf-d7a1-4ce0-94d0-e3fddf43f515",
+        "module_uuid": "af116a44-ee03-49b4-a7c5-7bada15ff356",
+        "version": [1, 0, 0],
+        "skins": ["hotaru", "mio", "kurogane"],
+        "style": {"bg": ((30, 58, 74), (8, 12, 24)), "title": (176, 246, 236),
+                  "label": (255, 150, 170)},
+    },
 }

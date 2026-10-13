@@ -6,6 +6,7 @@ Bedrock Edition skin packs with HD textures and custom 3D geometry.
 | --- | --- | --- |
 | Midnight Mischief | `MidnightMischief/` | 12 Halloween characters |
 | Solar System | `SolarSystem/` | 10 aliens from the Sun, the planets, the Moon and Pluto |
+| Land of the Hidden Sift | `LandOfTheHiddenSift/` | Anime-style shinobi of a village hidden in the Sift (in progress: 3 of 12) |
 
 Each pack folder is the skin pack itself. You can zip it or drop it into the Marketplace submission:
 
@@ -56,6 +57,16 @@ One alien from every world in the Solar System except Earth, in order from the S
 | Glacia | Uranus | Slim | Ice-crystal tiara and shoulder crystals, sideways ponytail, icicle skirt, fur boots |
 | Neptide | Neptune | Classic | Gold trident across the back, dorsal-fin crest, fin ears, forearm + calf fins, webbed feet |
 | Pip | Pluto | Classic | Fur-trimmed hood, antennae, Charon the moon buddy, mittens, fur-cuffed snow boots |
+
+## Land of the Hidden Sift
+
+A hidden shinobi village inside the Sift, the soul-filled dimension reached through rifts deep underground. Its people are original side characters: villagers who wear the village headband (the crest is a rift splitting a diamond), and the Soul-Infused rogue ninja who went too deep into the rifts and wear theirs slashed through.
+
+| Skin | Role | Arms | 3D extras |
+| --- | --- | --- | --- |
+| Hotaru the Academy Hopeful | Villager | Classic | Village headband with tails, knotted coral scarf, soul-firefly jar, thigh holster, open-toed sandals |
+| Mio the Blub Keeper | Villager | Slim | A Blub riding on her shoulder, long hair and face-framing locks, meadow-flower hairpin, headband worn as a neckband, obi bow |
+| Kurogane the Soul-Bound | Villain | Classic | Slashed headband, low ponytail, coat with soul-flame hem and tattered tails, Carapace chitin pauldron, floating soul wisps |
 
 ## Previews
 

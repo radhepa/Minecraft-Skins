@@ -177,7 +177,10 @@ def lineup(pack, entries, cols=6):
         cx, cy = (i % cols) * cw, 150 + (i // cols) * ch
         im = fit(crop_alpha(im), cw - 40, ch - 90)
         out.alpha_composite(im, (cx + (cw - im.width) // 2, cy + (ch - 60 - im.height) // 2))
-        d.text((cx + cw // 2, cy + ch - 36), mod.NAME, fill=STYLE["label"], font=font(28), anchor="mm")
+        size = 28
+        while size > 16 and d.textlength(mod.NAME, font=font(size)) > cw - 24:
+            size -= 2
+        d.text((cx + cw // 2, cy + ch - 36), mod.NAME, fill=STYLE["label"], font=font(size), anchor="mm")
     out.convert("RGB").save(os.path.join(ROOT, "previews", pack, "lineup.png"))
 
 

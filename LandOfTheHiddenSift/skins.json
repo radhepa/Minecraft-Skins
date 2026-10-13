@@ -1,0 +1,24 @@
+{
+  "skins": [
+    {
+      "localization_name": "Hotaru",
+      "geometry": "geometry.LandOfTheHiddenSift.Hotaru",
+      "texture": "hotaru.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Mio",
+      "geometry": "geometry.LandOfTheHiddenSift.Mio",
+      "texture": "mio.png",
+      "type": "paid"
+    },
+    {
+      "localization_name": "Kurogane",
+      "geometry": "geometry.LandOfTheHiddenSift.Kurogane",
+      "texture": "kurogane.png",
+      "type": "paid"
+    }
+  ],
+  "serialize_name": "LandOfTheHiddenSift",
+  "localization_name": "LandOfTheHiddenSift"
+}
